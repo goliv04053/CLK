@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the clksignal-gtk package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: clksignal-gtk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-21 23:16+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Open…"
+msgstr ""
+
+msgid "_New Window"
+msgstr ""
+
+msgid "_Open…"
+msgstr ""
+
+msgid "_Insert…"
+msgstr ""
+
+msgid "_Soft Reset"
+msgstr ""
+
+msgid "_Hard Reset"
+msgstr ""
+
+msgid "Use Keyboard as _Joystick"
+msgstr ""
+
+msgid "_Fullscreen"
+msgstr ""
+
+msgid "_About Clock Signal"
+msgstr ""
+
+msgid "Main Menu"
+msgstr ""
+
+msgid ""
+"Open a disk, tape, cartridge or snapshot, or drop one here.\n"
+"The emulator will select and configure a machine for you."
+msgstr ""
+
+msgid "ROMs Needed"
+msgstr ""
+
+msgid "_Choose ROM Files…"
+msgstr ""
+
+msgid "Provide ROMs"
+msgstr ""
+
+msgid "Only local files can be opened."
+msgstr ""
+
+#, c-format
+msgid "Clock Signal doesn't recognise “%s”."
+msgstr ""
+
+msgid ""
+"To run this machine, Clock Signal needs the following ROM images. Drop them "
+"here or choose them from your files; they'll be copied to "
+msgstr ""
+
+msgid "This machine couldn't be started."
+msgstr ""
+
+msgid "No audio output is available."
+msgstr ""
+
+msgid "Insert"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "That file can't be inserted into this machine."
+msgstr ""
+
+msgid "Choose ROM Files"
+msgstr ""
+
+#, c-format
+msgid "Not a ROM that Clock Signal knows: %s"
+msgstr ""
+
+msgid ""
+"Clock Signal is a latency-hating emulator of 8- and 16-bit platforms, by "
+"Thomas Harte, with a heavy signal processing tilt for accurate reproduction "
+"of original outputs.\n"
+"\n"
+"This is an unofficial GTK4/libadwaita frontend for Linux, based on the Mac "
+"version's features and on the earlier Qt and SDL frontends."
+msgstr ""
+
+msgid "GTK Frontend"
+msgstr ""
+
+msgid "Requested and Tested by"
+msgstr ""
