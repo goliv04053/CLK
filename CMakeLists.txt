@@ -43,8 +43,7 @@ endif()
 
 if(CLK_UI STREQUAL "GTK")
 	find_package(PkgConfig REQUIRED)
-	pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET gtk4>=4.12 libadwaita-1>=1.5)
-	find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
+	pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET gtk4>=4.12 libadwaita-1>=1.5 libpulse-simple)
 endif()
 
 include("CLK_SOURCES")
@@ -85,7 +84,7 @@ endif()
 
 if(CLK_UI STREQUAL "GTK")
 	set(CLK_GTK_APP_ID "io.github.tomharte.ClockSignal" CACHE STRING "Application ID for the GTK frontend")
-	target_link_libraries(clksignal PRIVATE PkgConfig::GTK4 SDL2::SDL2)
+	target_link_libraries(clksignal PRIVATE PkgConfig::GTK4)
 	target_compile_definitions(clksignal PRIVATE TARGET_GTK CLK_GTK_APP_ID="${CLK_GTK_APP_ID}" GETTEXT_PACKAGE="clksignal-gtk")
 	include_directories("OSBindings/GTK")
 	include(GNUInstallDirs)

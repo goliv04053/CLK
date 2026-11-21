@@ -12,12 +12,12 @@ https://github.com/goliv04053/CLK/issues rather than upstream.
 
 Fedora:
 
-    sudo dnf install cmake ninja-build gcc-c++ gtk4-devel libadwaita-devel SDL2-devel zlib-devel gettext
+    sudo dnf install cmake ninja-build gcc-c++ gtk4-devel libadwaita-devel pulseaudio-libs-devel zlib-devel gettext
     cmake -S . -B build-gtk -G Ninja -DCLK_UI=GTK -DCMAKE_BUILD_TYPE=Release
     cmake --build build-gtk
     ./build-gtk/clksignal [file]
 
-Debian/Ubuntu: `libgtk-4-dev libadwaita-1-dev libsdl2-dev zlib1g-dev gettext`.
+Debian/Ubuntu: `libgtk-4-dev libadwaita-1-dev libpulse-dev zlib1g-dev gettext`.
 
 Requires GTK 4.12 or later and libadwaita 1.5 or later.
 
@@ -45,7 +45,7 @@ All frontend code lives in this folder, so that merging upstream changes stays e
 - `main.cpp`: the application, its actions and shortcuts, the About dialog;
 - `MachineWindow.*`: one window per machine — welcome page, ROM requester, display, input;
 - `MachineRunner.*`: runs the machine in real time on its own thread;
-- `AudioOutput.*`: audio via SDL2;
+- `AudioOutput.*`: audio via PulseAudio (PipeWire on current desktops);
 - `KeyboardMapper.*`: GDK keycodes to Clock Signal keys;
 - `ROMs.*`: ROM search paths, fetching and installation;
 - `po/`: translations (pt_BR, es); `data/`: desktop file, AppStream metadata, icon;

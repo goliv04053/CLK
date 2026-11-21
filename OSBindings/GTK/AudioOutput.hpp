@@ -10,40 +10,44 @@
 
 #include "../../Outputs/Speaker/Speaker.hpp"
 
-#include <SDL.h>
-
 #include <atomic>
+#include <condition_variable>
 #include <cstdint>
 #include <mutex>
+#include <thread>
 #include <vector>
+
+struct pa_simple;
 
 namespace GTKFrontend {
 
-/// Plays a machine's speaker through SDL's audio subsystem (PipeWire or PulseAudio on Fedora),
-/// keeping only a small amount of audio queued to minimise latency.
+/// Plays a machine's speaker through PulseAudio, which on Fedora and other current
+/// desktops is served by PipeWire. Only a small amount of audio is kept queued, to
+/// minimise latency.
 class AudioOutput: public Outputs::Speaker::Speaker::Delegate {
 public:
 	~AudioOutput();
 
-	/// Opens an output device and attaches to @c speaker. Returns @c false if no audio is available.
+	/// Opens an output stream and attaches to @c speaker. Returns @c false if no audio is available.
 	bool start(Outputs::Speaker::Speaker &speaker);
 	void stop();
-
-	/// Volume in the range [0, 1].
-	void set_volume(float);
 
 private:
 	void speaker_did_complete_samples(Outputs::Speaker::Speaker &, const std::vector<int16_t> &) override;
 	void speaker_did_change_input_clock(Outputs::Speaker::Speaker &) override;
-	static void callback(void *, Uint8 *, int);
+	void run();
+
+	static constexpr int SampleRate = 48000;
+	static constexpr int BufferFrames = 512;
 
 	Outputs::Speaker::Speaker *speaker_ = nullptr;
-	SDL_AudioDeviceID device_ = 0;
-	int sample_rate_ = 0;
+	pa_simple *stream_ = nullptr;
 	int channels_ = 1;
-	int buffer_samples_ = 512;
 
+	std::thread thread_;
+	std::atomic<bool> running_ = false;
 	std::mutex buffer_mutex_;
+	std::condition_variable buffer_condition_;
 	std::vector<int16_t> buffer_;
 };
 

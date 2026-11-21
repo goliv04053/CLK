@@ -1,6 +1,6 @@
 #!/bin/sh
 # Builds ClockSignal-x86_64.AppImage with the GTK4/libadwaita frontend.
-# Needs: cmake, ninja, a C++20 compiler, gtk4 + libadwaita (>= 1.5) + SDL2 + zlib development
+# Needs: cmake, ninja, a C++20 compiler, gtk4 + libadwaita (>= 1.5) + libpulse + zlib development
 # packages, mksquashfs (squashfs-tools) and the AppImage type2 runtime
 # (https://github.com/AppImage/type2-runtime/releases, file "runtime-x86_64").
 #
@@ -20,10 +20,8 @@ rm -rf "$A"
 DESTDIR="$A" cmake --install "$BUILD"
 strip "$A/usr/bin/clksignal"
 
-# Bundle SDL2; everything else is expected on a GNOME desktop.
-mkdir -p "$A/usr/lib"
-SDL="$(ldd "$A/usr/bin/clksignal" | awk '/libSDL2/ {print $3}')"
-[ -n "$SDL" ] && cp -L "$SDL" "$A/usr/lib/"
+# Nothing is bundled: GTK4, libadwaita, OpenGL and PulseAudio (served by PipeWire) are part of any
+# current GNOME desktop, and using the host's copies keeps the app in line with the system theme.
 
 cp "$ROOT/OSBindings/GTK/packaging/AppRun" "$A/AppRun"
 cp "$A/usr/share/applications/$APP_ID.desktop" "$A/"
