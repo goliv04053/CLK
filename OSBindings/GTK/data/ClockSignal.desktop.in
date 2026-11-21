@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=Clock Signal
+GenericName=Retro Computer Emulator
+GenericName[pt_BR]=Emulador de computadores antigos
+GenericName[es]=Emulador de ordenadores retro
+Comment=Emulate 8- and 16-bit computers and consoles
+Comment[pt_BR]=Emule computadores e consoles de 8 e 16 bits
+Comment[es]=Emula ordenadores y consolas de 8 y 16 bits
+Exec=clksignal %F
+Icon=@CLK_GTK_APP_ID@
+Terminal=false
+Categories=Game;Emulator;
+Keywords=emulator;Amiga;Apple;Atari;BBC;Commodore;CPC;Electron;Macintosh;MSX;Oric;Spectrum;ZX81;
+StartupNotify=true
+DBusActivatable=false

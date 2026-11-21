@@ -43,7 +43,7 @@ write_sources '' 'set(' [A-Z]* -name OSBindings -prune -o \
 	-name '*AllRAM*.cpp' -prune -o -name '*.cpp' -print >> "$tmp"
 # TODO: Add 'Mac/Clock Signal'
 
-for dir in SDL Qt; do
+for dir in SDL Qt GTK; do
 	ui=$(echo "${dir%%/*}" | tr '[:lower:]' '[:upper:]')
 	dir="OSBindings/$dir"
 	printf '\nif(CLK_UI STREQUAL "%s")\n' "$ui" >> "$tmp"

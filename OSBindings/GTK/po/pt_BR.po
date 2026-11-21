@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: clksignal-gtk\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Open…"
+msgstr "Abrir…"
+
+msgid "_New Window"
+msgstr "_Nova janela"
+
+msgid "_Open…"
+msgstr "_Abrir…"
+
+msgid "_Insert…"
+msgstr "_Inserir…"
+
+msgid "_Soft Reset"
+msgstr "Reset _suave"
+
+msgid "_Hard Reset"
+msgstr "Reset _completo"
+
+msgid "Use Keyboard as _Joystick"
+msgstr "Usar teclado como _joystick"
+
+msgid "_Fullscreen"
+msgstr "_Tela cheia"
+
+msgid "_About Clock Signal"
+msgstr "_Sobre o Clock Signal"
+
+msgid "Main Menu"
+msgstr "Menu principal"
+
+msgid "Open a disk, tape, cartridge or snapshot, or drop one here.\nThe emulator will select and configure a machine for you."
+msgstr "Abra um disquete, fita, cartucho ou snapshot, ou arraste um para cá.\nO emulador escolhe e configura a máquina para você."
+
+msgid "ROMs Needed"
+msgstr "ROMs necessárias"
+
+msgid "_Choose ROM Files…"
+msgstr "_Escolher arquivos de ROM…"
+
+msgid "Provide ROMs"
+msgstr "Forneça as ROMs"
+
+msgid "Only local files can be opened."
+msgstr "Só é possível abrir arquivos locais."
+
+#, c-format
+msgid "Clock Signal doesn't recognise “%s”."
+msgstr "O Clock Signal não reconhece “%s”."
+
+msgid "To run this machine, Clock Signal needs the following ROM images. Drop them here or choose them from your files; they'll be copied to "
+msgstr "Para rodar esta máquina, o Clock Signal precisa das ROMs abaixo. Arraste-as para cá ou escolha nos seus arquivos; elas serão copiadas para "
+
+msgid "This machine couldn't be started."
+msgstr "Não foi possível iniciar esta máquina."
+
+msgid "No audio output is available."
+msgstr "Nenhuma saída de áudio disponível."
+
+msgid "Insert"
+msgstr "Inserir"
+
+msgid "Open"
+msgstr "Abrir"
+
+msgid "That file can't be inserted into this machine."
+msgstr "Esse arquivo não pode ser inserido nesta máquina."
+
+msgid "Choose ROM Files"
+msgstr "Escolher arquivos de ROM"
+
+#, c-format
+msgid "Not a ROM that Clock Signal knows: %s"
+msgstr "Não é uma ROM conhecida pelo Clock Signal: %s"
+
+msgid "Clock Signal is a latency-hating emulator of 8- and 16-bit platforms, by Thomas Harte, with a heavy signal processing tilt for accurate reproduction of original outputs.\n\nThis is an unofficial GTK4/libadwaita frontend for Linux, based on the Mac version's features and on the earlier Qt and SDL frontends."
+msgstr "O Clock Signal é um emulador de plataformas de 8 e 16 bits que odeia latência, feito por Thomas Harte, com forte ênfase em processamento de sinal para reproduzir fielmente a imagem e o som originais.\n\nEsta é uma interface GTK4/libadwaita não oficial para Linux, baseada nas funções da versão para Mac e nas interfaces Qt e SDL anteriores."
+
+msgid "GTK Frontend"
+msgstr "Interface GTK"
+
+msgid "Requested and Tested by"
+msgstr "Pedido e testado por"

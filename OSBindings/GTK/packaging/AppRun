@@ -1,0 +1,9 @@
+#!/bin/sh
+# AppRun for the Clock Signal GTK frontend.
+# GTK4, libadwaita and OpenGL come from the host (so the app follows the system theme);
+# only libraries a GNOME desktop may lack, such as SDL2, are bundled.
+HERE="$(dirname "$(readlink -f "$0")")"
+export APPDIR="${APPDIR:-$HERE}"
+export LD_LIBRARY_PATH="$HERE/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export XDG_DATA_DIRS="$HERE/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+exec "$HERE/usr/bin/clksignal" "$@"
