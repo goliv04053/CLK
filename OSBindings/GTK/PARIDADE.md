@@ -27,6 +27,10 @@ equivalente GNOME planejado e a fase em que entra. `[x]` = feito.
 - [x] Pasta de ROMs do usuário (~/.local/share/clksignal/ROMImages, compatível com a do Qt) — fase 1
 - [x] Janela de ROMs faltando, com a lista e área para arrastar e soltar a ROM (confere CRC e copia) — fase 2
 - [x] Mensagem de erro quando a ROM arrastada não é a esperada — fase 2
+- [x] ROM com cabeçalho ou sobra no fim também é aceita (o Mac corta e confere o CRC) — fase 2
+- [x] Extra do Linux: lista item por item (todas/qualquer uma/opcional), com tamanho e CRC — fase 2
+- [x] Extra do Linux: soltar várias ROMs ou uma pasta inteira de uma vez, com aviso de quantas entraram — fase 2
+- [x] Extra do Linux: botão e menu "Abrir pasta de ROMs" — fase 2
 
 ## Vídeo
 - [x] Tela com o renderizador OpenGL do núcleo (efeitos de sinal composto/CRT) — fase 1

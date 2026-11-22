@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clksignal-gtk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 23:16+0000\n"
+"POT-Creation-Date: 2026-11-22 03:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,84 +17,169 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: MachineWindow.cpp:100
 msgid "Open…"
 msgstr ""
 
+#: MachineWindow.cpp:106
 msgid "_New Window"
 msgstr ""
 
+#: MachineWindow.cpp:107 MachineWindow.cpp:146
 msgid "_Open…"
 msgstr ""
 
+#: MachineWindow.cpp:108
 msgid "_Insert…"
 msgstr ""
 
+#: MachineWindow.cpp:109 MachineWindow.cpp:172
+msgid "Open _ROM Folder"
+msgstr ""
+
+#: MachineWindow.cpp:112
 msgid "_Soft Reset"
 msgstr ""
 
+#: MachineWindow.cpp:113
 msgid "_Hard Reset"
 msgstr ""
 
+#: MachineWindow.cpp:114
 msgid "Use Keyboard as _Joystick"
 msgstr ""
 
+#: MachineWindow.cpp:117
 msgid "_Fullscreen"
 msgstr ""
 
+#: MachineWindow.cpp:120
 msgid "_About Clock Signal"
 msgstr ""
 
+#: MachineWindow.cpp:127
 msgid "Main Menu"
 msgstr ""
 
+#: MachineWindow.cpp:144
 msgid ""
 "Open a disk, tape, cartridge or snapshot, or drop one here.\n"
 "The emulator will select and configure a machine for you."
 msgstr ""
 
+#: MachineWindow.cpp:157
 msgid "ROMs Needed"
 msgstr ""
 
+#: MachineWindow.cpp:167
 msgid "_Choose ROM Files…"
 msgstr ""
 
+#: MachineWindow.cpp:284
 msgid "Provide ROMs"
 msgstr ""
 
+#: MachineWindow.cpp:331
 msgid "Only local files can be opened."
 msgstr ""
 
+#: MachineWindow.cpp:355
 #, c-format
 msgid "Clock Signal doesn't recognise “%s”."
 msgstr ""
 
-msgid ""
-"To run this machine, Clock Signal needs the following ROM images. Drop them "
-"here or choose them from your files; they'll be copied to "
-msgstr ""
-
+#: MachineWindow.cpp:379
 msgid "This machine couldn't be started."
 msgstr ""
 
+#: MachineWindow.cpp:403
 msgid "No audio output is available."
 msgstr ""
 
+#: MachineWindow.cpp:453
 msgid "Insert"
 msgstr ""
 
+#: MachineWindow.cpp:453
 msgid "Open"
 msgstr ""
 
+#: MachineWindow.cpp:465
 msgid "That file can't be inserted into this machine."
 msgstr ""
 
+#: MachineWindow.cpp:477
 msgid "Choose ROM Files"
 msgstr ""
 
+#: MachineWindow.cpp:556
 #, c-format
-msgid "Not a ROM that Clock Signal knows: %s"
+msgid "Added %s"
 msgstr ""
 
+#: MachineWindow.cpp:556
+#, c-format
+msgid "Added %d ROMs"
+msgstr ""
+
+#: MachineWindow.cpp:559
+#, c-format
+msgid "Added %s, but this machine needs a different ROM"
+msgstr ""
+
+#: MachineWindow.cpp:560
+#, c-format
+msgid "Added %d ROMs, but none that this machine needs"
+msgstr ""
+
+#: MachineWindow.cpp:562
+#, c-format
+msgid "Added %s to your ROMs"
+msgstr ""
+
+#: MachineWindow.cpp:562
+#, c-format
+msgid "Added %d ROMs to your collection"
+msgstr ""
+
+#: MachineWindow.cpp:570
+#, c-format
+msgid "Didn't recognise the contents of %s"
+msgstr ""
+
+#: MachineWindow.cpp:571
+#, c-format
+msgid "Didn't recognise %d files as ROMs"
+msgstr ""
+
+#: MachineWindow.cpp:586
+#, c-format
+msgid ""
+"Clock Signal needs images of this machine's system ROMs. Drop them here or "
+"choose them; they'll be copied to %s, so you need do this only once."
+msgstr ""
+
+#: MachineWindow.cpp:612
+msgid "All of These"
+msgstr ""
+
+#: MachineWindow.cpp:614
+msgid "Either of These"
+msgstr ""
+
+#: MachineWindow.cpp:614
+msgid "Any One of These"
+msgstr ""
+
+#: MachineWindow.cpp:638
+msgid " or "
+msgstr ""
+
+#: MachineWindow.cpp:653
+msgid "Optional"
+msgstr ""
+
+#: main.cpp:33
 msgid ""
 "Clock Signal is a latency-hating emulator of 8- and 16-bit platforms, by "
 "Thomas Harte, with a heavy signal processing tilt for accurate reproduction "
@@ -104,8 +189,10 @@ msgid ""
 "version's features and on the earlier Qt and SDL frontends."
 msgstr ""
 
+#: main.cpp:44
 msgid "GTK Frontend"
 msgstr ""
 
+#: main.cpp:46
 msgid "Requested and Tested by"
 msgstr ""

@@ -94,17 +94,40 @@ ROMMachine::ROMFetcher fetcher(ROM::Request &missing) {
 	};
 }
 
+namespace {
+// Larger than any ROM in the catalogue; anything bigger isn't worth reading.
+constexpr std::uintmax_t MaximumROMSize = 16 * 1024 * 1024;
+}
+
 InstallResult install(const std::filesystem::path &file) {
 	InstallResult result;
-	const auto contents = read_file(file);
+	std::error_code error;
+	const auto file_size = std::filesystem::file_size(file, error);
+	if(error || !file_size || file_size > MaximumROMSize) return result;
+
+	auto contents = read_file(file);
 	if(!contents || contents->empty()) return result;
 
-	const uint32_t crc = CRC::CRC32::crc_of(*contents);
-	const auto description = ROM::Description::from_crc(crc);
+	// Try for a direct CRC match.
+	auto description = ROM::Description::from_crc(CRC::CRC32::crc_of(*contents));
+
+	// Failing that, see whether there's an acceptable trimming that creates a match,
+	// e.g. a dump with a header or trailing padding.
+	if(!description) {
+		for(const auto &candidate: ROM::all_descriptions()) {
+			if(!candidate.size || candidate.size >= contents->size()) continue;
+			const std::vector<uint8_t> trimmed(contents->begin(), contents->begin() + ptrdiff_t(candidate.size));
+			if(candidate.crc32s.contains(CRC::CRC32::crc_of(trimmed))) {
+				description = candidate;
+				contents->resize(candidate.size);
+				break;
+			}
+		}
+	}
 	if(!description || description->file_names.empty()) return result;
 
-	std::error_code error;
 	const auto folder = user_path() / description->machine_name;
+	error.clear();
 	std::filesystem::create_directories(folder, error);
 	if(error) return result;
 
@@ -113,8 +136,42 @@ InstallResult install(const std::filesystem::path &file) {
 	if(!output) return result;
 
 	result.installed = true;
+	result.name = description->name;
 	result.descriptive_name = description->descriptive_name;
 	return result;
+}
+
+bool is_known_rom(const std::filesystem::path &file) {
+	std::error_code error;
+	const auto file_size = std::filesystem::file_size(file, error);
+	if(error || !file_size || file_size > MaximumROMSize) return false;
+
+	const auto contents = read_file(file);
+	return contents && ROM::Description::from_crc(CRC::CRC32::crc_of(*contents)).has_value();
+}
+
+std::vector<std::filesystem::path> expand_folders(const std::vector<std::filesystem::path> &paths) {
+	constexpr size_t MaximumFiles = 20'000;
+	std::vector<std::filesystem::path> files;
+	for(const auto &path: paths) {
+		std::error_code error;
+		if(!std::filesystem::is_directory(path, error)) {
+			files.push_back(path);
+			continue;
+		}
+
+		auto iterator = std::filesystem::recursive_directory_iterator(
+			path, std::filesystem::directory_options::skip_permission_denied, error);
+		for(; !error && iterator != std::filesystem::recursive_directory_iterator(); iterator.increment(error)) {
+			std::error_code entry_error;
+			if(!iterator->is_regular_file(entry_error)) continue;
+			const auto size = iterator->file_size(entry_error);
+			if(entry_error || !size || size > MaximumROMSize) continue;
+			files.push_back(iterator->path());
+			if(files.size() >= MaximumFiles) return files;
+		}
+	}
+	return files;
 }
 
 std::string display_path(const std::filesystem::path &path) {

@@ -32,11 +32,20 @@ ROMMachine::ROMFetcher fetcher(ROM::Request &missing);
 /// Outcome of trying to install a single file as a ROM.
 struct InstallResult {
 	bool installed = false;
-	std::string descriptive_name;	// Set if installed.
+	ROM::Name name = ROM::Name::None;	// Set if installed.
+	std::string descriptive_name;		// Set if installed.
 };
 
 /// Identifies @c file by CRC and, if it is a known ROM, copies it into the user's ROM folder.
+/// As per the Mac version, a file that is longer than a known ROM but begins with it is also accepted.
 InstallResult install(const std::filesystem::path &file);
+
+/// @returns @c true if @c file is exactly a ROM image that Clock Signal knows, by CRC.
+bool is_known_rom(const std::filesystem::path &file);
+
+/// Expands any folders within @c paths into the files they contain, recursively, so that a whole
+/// ROM collection can be dropped at once. Files too large to be ROMs are skipped.
+std::vector<std::filesystem::path> expand_folders(const std::vector<std::filesystem::path> &paths);
 
 /// @returns @c path for display, with the home folder shown as ~.
 std::string display_path(const std::filesystem::path &path);
