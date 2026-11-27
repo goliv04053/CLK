@@ -91,7 +91,8 @@ int main(int argc, char *argv[]) {
 	// shortcut also has a Ctrl+Shift form that always works.
 	struct Accel { const char *action; const char *accels[3]; };
 	static const Accel accels[] = {
-		{"app.new-window",		{"<Control>n", "<Control><Shift>n", nullptr}},
+		{"win.new-machine",		{"<Control>n", "<Control><Shift>n", nullptr}},
+		{"app.new-window",		{"<Control><Alt>n", nullptr, nullptr}},
 		{"app.quit",			{"<Control>q", "<Control><Shift>q", nullptr}},
 		{"win.open",			{"<Control>o", "<Control><Shift>o", nullptr}},
 		{"win.insert",			{"<Control>i", "<Control><Shift>i", nullptr}},

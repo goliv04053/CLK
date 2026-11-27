@@ -307,9 +307,11 @@ if(CLK_UI STREQUAL "GTK")
 	list(APPEND CLK_SOURCES
 		OSBindings/GTK/AudioOutput.cpp
 		OSBindings/GTK/KeyboardMapper.cpp
+		OSBindings/GTK/MachinePicker.cpp
 		OSBindings/GTK/MachineRunner.cpp
 		OSBindings/GTK/MachineWindow.cpp
 		OSBindings/GTK/ROMs.cpp
+		OSBindings/GTK/Settings.cpp
 		OSBindings/GTK/main.cpp
 	)
 endif()
