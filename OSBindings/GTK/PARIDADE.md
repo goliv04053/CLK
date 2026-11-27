@@ -15,12 +15,16 @@ equivalente GNOME planejado e a fase em que entra. `[x]` = feito.
 - [x] Fechar janela para a máquina (Ctrl+W) — fase 1
 
 ## Nova máquina (Machine Picker)
-- [ ] Janela "Escolher uma máquina" com as 20 máquinas: Amiga, Amstrad CPC, Apple II, Apple IIgs,
-      Archimedes, Atari ST, BBC Micro, Commodore TED (Plus 4), Electron, Enterprise, Macintosh, MSX,
-      Oric, PC Compatível, Tandy CoCo, Thomson MO, Vic-20, ZX80, ZX81, ZX Spectrum — fase 3
-- [ ] Todas as configurações de cada uma (modelo, memória, região, controladora de disco, DOS,
+- [x] Janela "Nova máquina" (Ctrl+N, menu e botão na tela inicial) com as mesmas 19 máquinas que o Mac
+      mostra: Amiga, Amstrad CPC, Apple II, Archimedes, Atari ST, BBC Micro, Commodore TED (Plus 4),
+      Electron, Enterprise, Macintosh, MSX, Oric, PC Compatível, Tandy CoCo, Thomson MO, Vic-20, ZX80,
+      ZX81, ZX Spectrum — fase 3
+- [ ] Apple IIgs: o Mac esconde nas versões finais porque ainda não está pronto; escondido aqui também
+- [x] Todas as configurações de cada uma (modelo, memória, região, controladora de disco, DOS,
       segundo processador, Mockingboard, MSX-MUSIC, BeebSID, unidade C-1540/1541, CGA/MDA, etc.) — fase 3
-- [ ] Lembrar a última escolha e as configurações de cada máquina — fase 3
+- [x] Enterprise: pasta local visível para a máquina — fase 3
+- [x] Lembrar a última escolha e as configurações de cada máquina (~/.config/clksignal/gtk.ini) — fase 3
+- [x] Máquina ocupada: a nova máquina abre em outra janela, como no Mac — fase 3
 
 ## ROMs
 - [x] Usar ROMs embutidas quando o núcleo tem — fase 1

@@ -10,6 +10,7 @@
 
 #include "i18n.hpp"
 #include "KeyboardMapper.hpp"
+#include "MachinePicker.hpp"
 #include "ROMs.hpp"
 
 #include "../../Configurable/StandardOptions.hpp"
@@ -53,6 +54,9 @@ MachineWindow::MachineWindow(GtkApplication *const application) {
 
 	// Actions; these are this window's equivalent of the Mac version's document menu items.
 	static const GActionEntry entries[] = {
+		{"new-machine", [](GSimpleAction *, GVariant *, gpointer self) {
+			static_cast<MachineWindow *>(self)->choose_new_machine();
+		}, nullptr, nullptr, nullptr, {}},
 		{"open", [](GSimpleAction *, GVariant *, gpointer self) {
 			static_cast<MachineWindow *>(self)->choose_file(false);
 		}, nullptr, nullptr, nullptr, {}},
@@ -103,6 +107,7 @@ MachineWindow::MachineWindow(GtkApplication *const application) {
 
 	GMenu *const menu = g_menu_new();
 	GMenu *const file_section = g_menu_new();
+	g_menu_append(file_section, _("New _Machine…"), "win.new-machine");
 	g_menu_append(file_section, _("_New Window"), "app.new-window");
 	g_menu_append(file_section, _("_Open…"), "win.open");
 	g_menu_append(file_section, _("_Insert…"), "win.insert");
@@ -143,12 +148,18 @@ MachineWindow::MachineWindow(GtkApplication *const application) {
 	adw_status_page_set_description(welcome,
 		_("Open a disk, tape, cartridge or snapshot, or drop one here.\n"
 		"The emulator will select and configure a machine for you."));
+	auto *const welcome_buttons = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 12));
+	gtk_widget_set_halign(GTK_WIDGET(welcome_buttons), GTK_ALIGN_CENTER);
 	auto *const welcome_button = gtk_button_new_with_mnemonic(_("_Open…"));
 	gtk_actionable_set_action_name(GTK_ACTIONABLE(welcome_button), "win.open");
 	gtk_widget_add_css_class(welcome_button, "suggested-action");
 	gtk_widget_add_css_class(welcome_button, "pill");
-	gtk_widget_set_halign(welcome_button, GTK_ALIGN_CENTER);
-	adw_status_page_set_child(welcome, welcome_button);
+	gtk_box_append(welcome_buttons, welcome_button);
+	auto *const new_machine_button = gtk_button_new_with_mnemonic(_("New _Machine…"));
+	gtk_actionable_set_action_name(GTK_ACTIONABLE(new_machine_button), "win.new-machine");
+	gtk_widget_add_css_class(new_machine_button, "pill");
+	gtk_box_append(welcome_buttons, new_machine_button);
+	adw_status_page_set_child(welcome, GTK_WIDGET(welcome_buttons));
 	gtk_stack_add_named(stack_, GTK_WIDGET(welcome), "welcome");
 
 	// ROM request page: the Mac version's ROM requester sheet, listing each missing ROM.
@@ -363,6 +374,25 @@ bool MachineWindow::launch_file(const std::filesystem::path &path) {
 	display_name_ = path.filename().string();
 	launch_targets();
 	return true;
+}
+
+void MachineWindow::choose_new_machine() {
+	MachinePicker::present(GTK_WIDGET(window_), [this](Analyser::Static::TargetList &&targets, const std::string &name) {
+		// As with opening a file: an idle window takes the machine; a busy one spawns a sibling.
+		if(machine_) {
+			auto *const sibling = create(gtk_window_get_application(window()));
+			sibling->launch_new_machine(std::move(targets), name);
+			return;
+		}
+		launch_new_machine(std::move(targets), name);
+	});
+}
+
+void MachineWindow::launch_new_machine(Analyser::Static::TargetList &&targets, const std::string &name) {
+	targets_ = std::move(targets);
+	source_file_.clear();
+	display_name_ = name;
+	launch_targets();
 }
 
 void MachineWindow::launch_targets() {
@@ -591,8 +621,11 @@ void MachineWindow::populate_rom_list() {
 
 	// One group per list in the request, titled by whether all or any of its ROMs are needed.
 	// Rows that follow a nested list go into a fresh, untitled group so that order is preserved.
+	// Groups are created only once they have a ROM to show, so that a list consisting only
+	// of other lists doesn't leave an empty heading.
 	struct Group {
-		AdwPreferencesGroup *group;
+		const char *title = nullptr;
+		AdwPreferencesGroup *group = nullptr;
 		bool interrupted = false;
 	};
 	std::vector<Group> groups;
@@ -616,16 +649,20 @@ void MachineWindow::populate_rom_list() {
 					default: break;
 				}
 			}
-			groups.push_back({new_group(title)});
+			groups.push_back({title});
 		},
 		[&] {
 			groups.pop_back();
 		},
 		[&](ROM::Request::ListType, const ROM::Description &rom, const bool is_optional, size_t) {
-			if(groups.empty()) {
-				groups.push_back({new_group(nullptr)});
-			} else if(groups.back().interrupted) {
-				groups.back() = {new_group(nullptr)};
+			if(groups.empty()) groups.push_back({});
+			auto &current = groups.back();
+			if(!current.group) {
+				current.group = new_group(current.title);
+			} else if(current.interrupted) {
+				// Rows that follow a nested list continue in a fresh, untitled group.
+				current.group = new_group(nullptr);
+				current.interrupted = false;
 			}
 
 			auto *const row = adw_action_row_new();
@@ -654,7 +691,7 @@ void MachineWindow::populate_rom_list() {
 				gtk_widget_add_css_class(label, "dim-label");
 				adw_action_row_add_suffix(ADW_ACTION_ROW(row), label);
 			}
-			adw_preferences_group_add(groups.back().group, row);
+			adw_preferences_group_add(current.group, row);
 		}
 	);
 }

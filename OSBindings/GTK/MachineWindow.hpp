@@ -53,6 +53,8 @@ private:
 
 	// Machine lifecycle.
 	bool launch_file(const std::filesystem::path &);
+	void choose_new_machine();
+	void launch_new_machine(Analyser::Static::TargetList &&, const std::string &name);
 	void launch_targets();
 	void delete_machine();
 	bool insert_file(const std::filesystem::path &);
