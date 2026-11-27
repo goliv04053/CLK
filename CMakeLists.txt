@@ -116,6 +116,31 @@ if(CLK_UI STREQUAL "SDL")
 	target_link_libraries(clksignal PRIVATE SDL2::SDL2)
 endif()
 
+# Processor conformance tests that run without Xcode; see OSBindings/GTK/tests.
+option(CLK_CPU_TESTS "Build the processor conformance test runner" OFF)
+if(CLK_CPU_TESTS)
+	enable_testing()
+	add_executable(clksignal-cpu-tests
+		OSBindings/GTK/tests/cpu_tests.cpp
+		Processors/AllRAMProcessor.cpp
+		Processors/6502/AllRAM/6502AllRAM.cpp
+		Processors/6502/Implementation/6502Storage.cpp
+		Processors/65816/Implementation/65816Base.cpp
+		Processors/65816/Implementation/65816Storage.cpp
+		Processors/Z80/AllRAM/Z80AllRAM.cpp
+		Processors/Z80/Implementation/PartialMachineCycle.cpp
+		Processors/Z80/Implementation/Z80Base.cpp
+		Processors/Z80/Implementation/Z80Storage.cpp
+		Components/Serial/Line.cpp
+	)
+	set(CLK_TEST_DATA "${CMAKE_CURRENT_SOURCE_DIR}/OSBindings/Mac/Clock SignalTests")
+	foreach(test klaus-6502 klaus-6502-on-65c02 klaus-6502-on-65816 klaus-65c02 klaus-65c02-on-65816 allsuitea
+			z80doc z80docflags z80flags z80full z80ccf z80memptr zexdoc zexall)
+		add_test(NAME ${test} COMMAND clksignal-cpu-tests ${CLK_TEST_DATA} ${test})
+	endforeach()
+	set_tests_properties(zexdoc zexall PROPERTIES TIMEOUT 3600)
+endif()
+
 # Somewhat boilerplate; more for the Snap than anything.
 install(TARGETS clksignal RUNTIME DESTINATION bin)
 

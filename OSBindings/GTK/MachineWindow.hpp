@@ -72,9 +72,13 @@ private:
 
 	// File handling.
 	bool handle_drop(const GSList *files);
-	void install_roms(const std::vector<std::filesystem::path> &files);
+	/// Installs any ROMs among @c files, or within folders among them, with feedback.
+	/// @returns @c true if any ROM was installed.
+	bool install_roms(const std::vector<std::filesystem::path> &files, bool report_unrecognised = true);
 	void choose_file(bool insert);
 	void choose_roms();
+	void open_rom_folder();
+	void populate_rom_list();
 	void show_toast(const std::string &);
 
 	// Widgets.
@@ -84,6 +88,7 @@ private:
 	AdwToastOverlay *toasts_ = nullptr;
 	GtkStack *stack_ = nullptr;
 	AdwStatusPage *roms_page_ = nullptr;
+	GtkBox *roms_list_ = nullptr;
 	GtkGLArea *gl_area_ = nullptr;
 	GSimpleActionGroup *actions_ = nullptr;
 

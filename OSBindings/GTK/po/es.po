@@ -1,91 +1,196 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: clksignal-gtk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-22 03:47+0000\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: MachineWindow.cpp:100
 msgid "Open…"
 msgstr "Abrir…"
 
+#: MachineWindow.cpp:106
 msgid "_New Window"
 msgstr "_Nueva ventana"
 
+#: MachineWindow.cpp:107 MachineWindow.cpp:146
 msgid "_Open…"
 msgstr "_Abrir…"
 
+#: MachineWindow.cpp:108
 msgid "_Insert…"
 msgstr "_Insertar…"
 
+#: MachineWindow.cpp:109 MachineWindow.cpp:172
+msgid "Open _ROM Folder"
+msgstr "Abrir carpeta de _ROMs"
+
+#: MachineWindow.cpp:112
 msgid "_Soft Reset"
 msgstr "Reinicio _suave"
 
+#: MachineWindow.cpp:113
 msgid "_Hard Reset"
 msgstr "Reinicio _completo"
 
+#: MachineWindow.cpp:114
 msgid "Use Keyboard as _Joystick"
 msgstr "Usar teclado como _joystick"
 
+#: MachineWindow.cpp:117
 msgid "_Fullscreen"
 msgstr "_Pantalla completa"
 
+#: MachineWindow.cpp:120
 msgid "_About Clock Signal"
 msgstr "_Acerca de Clock Signal"
 
+#: MachineWindow.cpp:127
 msgid "Main Menu"
 msgstr "Menú principal"
 
-msgid "Open a disk, tape, cartridge or snapshot, or drop one here.\nThe emulator will select and configure a machine for you."
-msgstr "Abre un disco, cinta, cartucho o instantánea, o arrástralo aquí.\nEl emulador elegirá y configurará una máquina por ti."
+#: MachineWindow.cpp:144
+msgid ""
+"Open a disk, tape, cartridge or snapshot, or drop one here.\n"
+"The emulator will select and configure a machine for you."
+msgstr ""
+"Abre un disco, cinta, cartucho o instantánea, o arrástralo aquí.\n"
+"El emulador elegirá y configurará una máquina por ti."
 
+#: MachineWindow.cpp:157
 msgid "ROMs Needed"
 msgstr "Se necesitan ROMs"
 
+#: MachineWindow.cpp:167
 msgid "_Choose ROM Files…"
 msgstr "_Elegir archivos de ROM…"
 
+#: MachineWindow.cpp:284
 msgid "Provide ROMs"
 msgstr "Proporciona las ROMs"
 
+#: MachineWindow.cpp:331
 msgid "Only local files can be opened."
 msgstr "Solo se pueden abrir archivos locales."
 
+#: MachineWindow.cpp:355
 #, c-format
 msgid "Clock Signal doesn't recognise “%s”."
 msgstr "Clock Signal no reconoce «%s»."
 
-msgid "To run this machine, Clock Signal needs the following ROM images. Drop them here or choose them from your files; they'll be copied to "
-msgstr "Para ejecutar esta máquina, Clock Signal necesita las siguientes ROMs. Arrástralas aquí o elígelas de tus archivos; se copiarán en "
-
+#: MachineWindow.cpp:379
 msgid "This machine couldn't be started."
 msgstr "No se pudo iniciar esta máquina."
 
+#: MachineWindow.cpp:403
 msgid "No audio output is available."
 msgstr "No hay salida de audio disponible."
 
+#: MachineWindow.cpp:453
 msgid "Insert"
 msgstr "Insertar"
 
+#: MachineWindow.cpp:453
 msgid "Open"
 msgstr "Abrir"
 
+#: MachineWindow.cpp:465
 msgid "That file can't be inserted into this machine."
 msgstr "Ese archivo no se puede insertar en esta máquina."
 
+#: MachineWindow.cpp:477
 msgid "Choose ROM Files"
 msgstr "Elegir archivos de ROM"
 
+#: MachineWindow.cpp:556
 #, c-format
-msgid "Not a ROM that Clock Signal knows: %s"
-msgstr "No es una ROM que Clock Signal conozca: %s"
+msgid "Added %s"
+msgstr "ROM añadida: %s"
 
-msgid "Clock Signal is a latency-hating emulator of 8- and 16-bit platforms, by Thomas Harte, with a heavy signal processing tilt for accurate reproduction of original outputs.\n\nThis is an unofficial GTK4/libadwaita frontend for Linux, based on the Mac version's features and on the earlier Qt and SDL frontends."
-msgstr "Clock Signal es un emulador de plataformas de 8 y 16 bits que detesta la latencia, de Thomas Harte, con un fuerte énfasis en el procesamiento de señal para reproducir fielmente la salida original.\n\nEsta es una interfaz GTK4/libadwaita no oficial para Linux, basada en las funciones de la versión para Mac y en las interfaces Qt y SDL anteriores."
+#: MachineWindow.cpp:556
+#, c-format
+msgid "Added %d ROMs"
+msgstr "%d ROMs añadidas"
 
+#: MachineWindow.cpp:559
+#, c-format
+msgid "Added %s, but this machine needs a different ROM"
+msgstr "ROM añadida: %s, pero esta máquina necesita otra"
+
+#: MachineWindow.cpp:560
+#, c-format
+msgid "Added %d ROMs, but none that this machine needs"
+msgstr "%d ROMs añadidas, pero ninguna de las que necesita esta máquina"
+
+#: MachineWindow.cpp:562
+#, c-format
+msgid "Added %s to your ROMs"
+msgstr "Añadida a tus ROMs: %s"
+
+#: MachineWindow.cpp:562
+#, c-format
+msgid "Added %d ROMs to your collection"
+msgstr "%d ROMs añadidas a tu colección"
+
+#: MachineWindow.cpp:570
+#, c-format
+msgid "Didn't recognise the contents of %s"
+msgstr "No se reconoció el contenido de %s"
+
+#: MachineWindow.cpp:571
+#, c-format
+msgid "Didn't recognise %d files as ROMs"
+msgstr "%d archivos no se reconocieron como ROMs"
+
+#: MachineWindow.cpp:586
+#, c-format
+msgid ""
+"Clock Signal needs images of this machine's system ROMs. Drop them here or "
+"choose them; they'll be copied to %s, so you need do this only once."
+msgstr ""
+"Clock Signal necesita las imágenes de las ROMs de sistema de esta máquina. "
+"Arrástralas aquí o elige los archivos; se copiarán a %s, así que solo "
+"tendrás que hacerlo una vez."
+
+#: MachineWindow.cpp:612
+msgid "All of These"
+msgstr "Todas estas"
+
+#: MachineWindow.cpp:614
+msgid "Either of These"
+msgstr "Una de estas dos"
+
+#: MachineWindow.cpp:614
+msgid "Any One of These"
+msgstr "Cualquiera de estas"
+
+#: MachineWindow.cpp:638
+msgid " or "
+msgstr " o "
+
+#: MachineWindow.cpp:653
+msgid "Optional"
+msgstr "Opcional"
+
+#: main.cpp:33
+msgid ""
+"Clock Signal is a latency-hating emulator of 8- and 16-bit platforms, by Thomas Harte, with a heavy signal processing tilt for accurate reproduction of original outputs.\n"
+"\n"
+"This is an unofficial GTK4/libadwaita frontend for Linux, based on the Mac version's features and on the earlier Qt and SDL frontends."
+msgstr ""
+"Clock Signal es un emulador de plataformas de 8 y 16 bits que detesta la latencia, de Thomas Harte, con un fuerte énfasis en el procesamiento de señal para reproducir fielmente la salida original.\n"
+"\n"
+"Esta es una interfaz GTK4/libadwaita no oficial para Linux, basada en las funciones de la versión para Mac y en las interfaces Qt y SDL anteriores."
+
+#: main.cpp:44
 msgid "GTK Frontend"
 msgstr "Interfaz GTK"
 
+#: main.cpp:46
 msgid "Requested and Tested by"
 msgstr "Solicitado y probado por"

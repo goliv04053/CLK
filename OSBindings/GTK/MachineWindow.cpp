@@ -62,6 +62,9 @@ MachineWindow::MachineWindow(GtkApplication *const application) {
 		{"choose-roms", [](GSimpleAction *, GVariant *, gpointer self) {
 			static_cast<MachineWindow *>(self)->choose_roms();
 		}, nullptr, nullptr, nullptr, {}},
+		{"open-rom-folder", [](GSimpleAction *, GVariant *, gpointer self) {
+			static_cast<MachineWindow *>(self)->open_rom_folder();
+		}, nullptr, nullptr, nullptr, {}},
 		{"soft-reset", [](GSimpleAction *, GVariant *, gpointer data) {
 			auto &self = *static_cast<MachineWindow *>(data);
 			if(!self.machine_) return;
@@ -103,6 +106,7 @@ MachineWindow::MachineWindow(GtkApplication *const application) {
 	g_menu_append(file_section, _("_New Window"), "app.new-window");
 	g_menu_append(file_section, _("_Open…"), "win.open");
 	g_menu_append(file_section, _("_Insert…"), "win.insert");
+	g_menu_append(file_section, _("Open _ROM Folder"), "win.open-rom-folder");
 	g_menu_append_section(menu, nullptr, G_MENU_MODEL(file_section));
 	GMenu *const machine_section = g_menu_new();
 	g_menu_append(machine_section, _("_Soft Reset"), "win.soft-reset");
@@ -147,16 +151,31 @@ MachineWindow::MachineWindow(GtkApplication *const application) {
 	adw_status_page_set_child(welcome, welcome_button);
 	gtk_stack_add_named(stack_, GTK_WIDGET(welcome), "welcome");
 
-	// ROM request page: the Mac version's ROM requester sheet.
+	// ROM request page: the Mac version's ROM requester sheet, listing each missing ROM.
 	roms_page_ = ADW_STATUS_PAGE(adw_status_page_new());
 	adw_status_page_set_icon_name(roms_page_, "media-flash-symbolic");
 	adw_status_page_set_title(roms_page_, _("ROMs Needed"));
+	auto *const roms_content = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 24));
+	roms_list_ = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 18));
+	auto *const roms_clamp = adw_clamp_new();
+	adw_clamp_set_maximum_size(ADW_CLAMP(roms_clamp), 600);
+	adw_clamp_set_child(ADW_CLAMP(roms_clamp), GTK_WIDGET(roms_list_));
+	gtk_box_append(roms_content, roms_clamp);
+
+	auto *const roms_buttons = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12));
+	gtk_widget_set_halign(GTK_WIDGET(roms_buttons), GTK_ALIGN_CENTER);
 	auto *const roms_button = gtk_button_new_with_mnemonic(_("_Choose ROM Files…"));
 	gtk_actionable_set_action_name(GTK_ACTIONABLE(roms_button), "win.choose-roms");
 	gtk_widget_add_css_class(roms_button, "suggested-action");
 	gtk_widget_add_css_class(roms_button, "pill");
-	gtk_widget_set_halign(roms_button, GTK_ALIGN_CENTER);
-	adw_status_page_set_child(roms_page_, roms_button);
+	gtk_box_append(roms_buttons, roms_button);
+	auto *const folder_button = gtk_button_new_with_mnemonic(_("Open _ROM Folder"));
+	gtk_actionable_set_action_name(GTK_ACTIONABLE(folder_button), "win.open-rom-folder");
+	gtk_widget_add_css_class(folder_button, "pill");
+	gtk_box_append(roms_buttons, folder_button);
+	gtk_box_append(roms_content, GTK_WIDGET(roms_buttons));
+
+	adw_status_page_set_child(roms_page_, GTK_WIDGET(roms_content));
 	gtk_stack_add_named(stack_, GTK_WIDGET(roms_page_), "roms");
 
 	// Machine display.
@@ -323,8 +342,16 @@ void MachineWindow::open(GFile *const file) {
 }
 
 bool MachineWindow::launch_file(const std::filesystem::path &path) {
+	// A system ROM may share an extension with cartridges, e.g. .bin; take it as a ROM.
+	if(ROMs::is_known_rom(path)) {
+		return install_roms({path});
+	}
+
 	auto targets = Analyser::Static::GetTargets(path);
 	if(targets.empty()) {
+		// Perhaps it's a ROM, or a folder of them; if so, add them to the user's collection.
+		if(install_roms({path}, false)) return true;
+
 		char *const text = g_strdup_printf(_("Clock Signal doesn't recognise “%s”."), path.filename().c_str());
 		show_toast(text);
 		g_free(text);
@@ -346,11 +373,7 @@ void MachineWindow::launch_targets() {
 
 	if(error != Machine::Error::None || !machine) {
 		if(error == Machine::Error::MissingROM) {
-			const std::string description =
-				std::string(_("To run this machine, Clock Signal needs the following ROM images. "
-				"Drop them here or choose them from your files; they'll be copied to ")) +
-				ROMs::display_path(ROMs::user_path()) + ".\n\n" + ROMs::to_utf8(missing_roms_.description(0, L'•'));
-			adw_status_page_set_description(roms_page_, description.c_str());
+			populate_rom_list();
 			set_phase(Phase::RequestingROMs);
 		} else {
 			show_toast(_("This machine couldn't be started."));
@@ -477,8 +500,14 @@ bool MachineWindow::handle_drop(const GSList *const files) {
 	if(paths.empty()) return false;
 
 	switch(phase_) {
-		case Phase::Welcome:
+		case Phase::Welcome: {
+			// Several files or a folder at once can only be a ROM collection.
+			std::error_code error;
+			if(paths.size() > 1 || std::filesystem::is_directory(paths.front(), error)) {
+				return install_roms(paths);
+			}
 			return launch_file(paths.front());
+		}
 
 		case Phase::RequestingROMs:
 			install_roms(paths);
@@ -492,25 +521,154 @@ bool MachineWindow::handle_drop(const GSList *const files) {
 	return false;
 }
 
-void MachineWindow::install_roms(const std::vector<std::filesystem::path> &files) {
-	bool any_installed = false;
-	std::string unrecognised;
+bool MachineWindow::install_roms(const std::vector<std::filesystem::path> &paths, const bool report_unrecognised) {
+	const bool requesting = phase_ == Phase::RequestingROMs;
+
+	// Note which ROMs this machine is waiting for, to say whether each new one helps.
+	std::set<ROM::Name> wanted;
+	for(const auto &description: missing_roms_.all_descriptions()) {
+		wanted.insert(description.name);
+	}
+
+	const auto files = ROMs::expand_folders(paths);
+	std::vector<std::string> useful, other;
+	std::vector<std::string> unrecognised;
 	for(const auto &file: files) {
 		const auto result = ROMs::install(file);
-		if(result.installed) {
-			any_installed = true;
+		if(!result.installed) {
+			unrecognised.push_back(file.filename().string());
+		} else if(wanted.contains(result.name)) {
+			useful.push_back(result.descriptive_name);
 		} else {
-			if(!unrecognised.empty()) unrecognised += ", ";
-			unrecognised += file.filename().string();
+			other.push_back(result.descriptive_name);
 		}
 	}
 
-	if(!unrecognised.empty()) {
-		char *const text = g_strdup_printf(_("Not a ROM that Clock Signal knows: %s"), unrecognised.c_str());
+	// Feedback: one toast per outcome, naming the ROM where there's just one.
+	const auto report = [&](const std::vector<std::string> &names, const char *one, const char *many) {
+		if(names.empty()) return;
+		char *const text = names.size() == 1 ?
+			g_strdup_printf(one, names.front().c_str()) :
+			g_strdup_printf(many, int(names.size()));
+		show_toast(text);
+		g_free(text);
+	};
+	report(useful, _("Added %s"), _("Added %d ROMs"));
+	if(requesting) {
+		report(other,
+			_("Added %s, but this machine needs a different ROM"),
+			_("Added %d ROMs, but none that this machine needs"));
+	} else {
+		report(other, _("Added %s to your ROMs"), _("Added %d ROMs to your collection"));
+	}
+
+	// Folders are expected to contain other things, so only name unrecognised files that were
+	// chosen individually; the Mac version shows the same message.
+	const bool any_folder = files.size() != paths.size();
+	if(report_unrecognised && !unrecognised.empty() && (!any_folder || (useful.empty() && other.empty()))) {
+		char *const text = unrecognised.size() == 1 ?
+			g_strdup_printf(_("Didn't recognise the contents of %s"), unrecognised.front().c_str()) :
+			g_strdup_printf(_("Didn't recognise %d files as ROMs"), int(unrecognised.size()));
 		show_toast(text);
 		g_free(text);
 	}
-	if(any_installed) launch_targets();
+
+	if(requesting && !useful.empty()) launch_targets();
+	return !useful.empty() || !other.empty();
+}
+
+void MachineWindow::populate_rom_list() {
+	while(auto *const child = gtk_widget_get_first_child(GTK_WIDGET(roms_list_))) {
+		gtk_box_remove(roms_list_, child);
+	}
+
+	char *const intro = g_strdup_printf(
+		_("Clock Signal needs images of this machine's system ROMs. Drop them here or choose them; "
+		"they'll be copied to %s, so you need do this only once."),
+		ROMs::display_path(ROMs::user_path()).c_str());
+	adw_status_page_set_description(roms_page_, intro);
+	g_free(intro);
+
+	// One group per list in the request, titled by whether all or any of its ROMs are needed.
+	// Rows that follow a nested list go into a fresh, untitled group so that order is preserved.
+	struct Group {
+		AdwPreferencesGroup *group;
+		bool interrupted = false;
+	};
+	std::vector<Group> groups;
+	const auto new_group = [&](const char *title) {
+		auto *const group = ADW_PREFERENCES_GROUP(adw_preferences_group_new());
+		if(title) adw_preferences_group_set_title(group, title);
+		gtk_box_append(roms_list_, GTK_WIDGET(group));
+		return group;
+	};
+
+	missing_roms_.visit(
+		[&](const ROM::Request::ListType type, const size_t size) {
+			if(!groups.empty()) groups.back().interrupted = true;
+			const char *title = nullptr;
+			if(size > 1) {
+				switch(type) {
+					case ROM::Request::ListType::All:	title = _("All of These");	break;
+					case ROM::Request::ListType::Any:
+						title = size == 2 ? _("Either of These") : _("Any One of These");
+					break;
+					default: break;
+				}
+			}
+			groups.push_back({new_group(title)});
+		},
+		[&] {
+			groups.pop_back();
+		},
+		[&](ROM::Request::ListType, const ROM::Description &rom, const bool is_optional, size_t) {
+			if(groups.empty()) {
+				groups.push_back({new_group(nullptr)});
+			} else if(groups.back().interrupted) {
+				groups.back() = {new_group(nullptr)};
+			}
+
+			auto *const row = adw_action_row_new();
+			adw_preferences_row_set_use_markup(ADW_PREFERENCES_ROW(row), FALSE);
+			adw_preferences_row_set_title(ADW_PREFERENCES_ROW(row), rom.descriptive_name.c_str());
+
+			// Subtitle: where it'll be stored, and its size.
+			std::string subtitle = rom.machine_name + "/";
+			for(size_t c = 0; c < rom.file_names.size(); c++) {
+				if(c) subtitle += _(" or ");
+				subtitle += rom.file_names[c];
+			}
+			if(rom.size) {
+				char *const size = g_format_size_full(rom.size, G_FORMAT_SIZE_IEC_UNITS);
+				subtitle += " · ";
+				subtitle += size;
+				g_free(size);
+			}
+			adw_action_row_set_subtitle(ADW_ACTION_ROW(row), subtitle.c_str());
+			gtk_widget_set_tooltip_text(row, rom.description(ROM::Description::CRC).c_str());
+
+			auto *const icon = gtk_image_new_from_icon_name("media-flash-symbolic");
+			adw_action_row_add_prefix(ADW_ACTION_ROW(row), icon);
+			if(is_optional) {
+				auto *const label = gtk_label_new(_("Optional"));
+				gtk_widget_add_css_class(label, "dim-label");
+				adw_action_row_add_suffix(ADW_ACTION_ROW(row), label);
+			}
+			adw_preferences_group_add(groups.back().group, row);
+		}
+	);
+}
+
+void MachineWindow::open_rom_folder() {
+	const auto folder = ROMs::user_path();
+	std::error_code error;
+	std::filesystem::create_directories(folder, error);
+
+	GFile *const file = g_file_new_for_path(folder.c_str());
+	GtkFileLauncher *const launcher = gtk_file_launcher_new(file);
+	gtk_file_launcher_launch(launcher, window(), nullptr, nullptr, nullptr);
+	g_object_unref(launcher);
+	g_object_unref(file);
 }
 
 // MARK: - Display.

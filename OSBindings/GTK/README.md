@@ -56,3 +56,17 @@ All frontend code lives in this folder, so that merging upstream changes stays e
 Clock Signal is © Thomas Harte, under the MIT licence (see `LICENCE`). This frontend was written by
 Claude (Anthropic), at the request of Gabriel ([@goliv04053](https://github.com/goliv04053)), who
 also tests it; it reuses ideas and code from the Qt and SDL frontends and follows the macOS version's design.
+
+## Processor conformance tests
+
+Upstream's conformance tests (`OSBindings/Mac/Clock SignalTests`) run only from
+Xcode. `tests/cpu_tests.cpp` drives the same third-party test programs (Klaus
+Dormann, AllSuiteA, Patrik Rak's Z80 tests, Zexdoc and Zexall) against the core's
+all-RAM processor harnesses, so a Linux/GCC build can be checked as well:
+
+```sh
+cmake -B build-tests -G Ninja -DCLK_CPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+ninja -C build-tests clksignal-cpu-tests
+ctest --test-dir build-tests -E zex      # about 20 seconds
+ctest --test-dir build-tests -R zex      # Zexdoc and Zexall: several minutes each
+```
